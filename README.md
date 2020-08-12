@@ -1,8 +1,8 @@
-# R4DS [{BOOK_NAME}]({BOOK_LINK}) Book Club
+# R4DS [Modern Dive](https://moderndive.com/) Book Club
 
-A weekly reading group following the chapters of {BOOK_NAME} by {BOOK_AUTHOR(S)}
+A weekly reading group following the chapters of *Modern Dive* by Chester Ismay and Albert Y. Kim
 
-Visit the [{BOOK_CHANNEL} channel](https://r4ds.io/join) on Slack to join the video chat! 
+Visit the [#book_club-modern-dive](https://r4ds.io/join) channel on Slack to join the video chat! 
 
 This repo contains 3 main folders:
 
@@ -10,24 +10,21 @@ This repo contains 3 main folders:
 - Data: Example datasets are stored in this folder to help facilitate practical applications! (For more info, please check out [Data/README.md](Data/README.md))
 - QandA: A collection of questions (and answers) on the chapters that come up during meetings (or between!)
 
-
 Other useful guides: [Repo Maintainers Guide](.guides/repo-maintainers.md)
 
 ### Meeting Schedule 
 
-*Cohort 1 - (started 2020-07-31) - Fridays, 8pm E(D)T*
+*Cohort 1 - (started 2020-08-12) - Wednesdays, 7:30 EDT*
 
-- 2020-08-07 Chapter 3 - Data visualisation: Presenter TBD
-- 2020-08-14 Chapter 4 -  Workflow: basics: Presenter TBD
-- 2020-08-21 Chapter 5 - Data visualisation: Presenter TBD
+- 2020-08-07 Chapter ??? - ???: Presenter TBD
 
 <details>
   <summary> Future Meetings </summary>
 
-- 2020-08-28 Chapter 6 -  Workflow: scripts
-- 2020-09-04 Chapter 7 - Exploratory Data Analysis
-- 2020-09-11 Chapter 8 - Intro to Wrangling
-- 2020-09-18 Chapter 9 - Tibbles
+- 2020-08-17 Chapter ??? - ???
+- 2020-08-24 Chapter ??? - ???
+- 2020-08-31 Chapter ??? - ???
+- 2020-09-06 Chapter ??? - ???
 
 </details>
 <hr>
@@ -38,9 +35,4 @@ Other useful guides: [Repo Maintainers Guide](.guides/repo-maintainers.md)
 Introduction/Ch1 
 
 - Presenter: VIDEO | SLIDES
-
-Chapter 3 Data visualisation 
-
-- 
-
 
