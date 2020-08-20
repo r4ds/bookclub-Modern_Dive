@@ -16,13 +16,10 @@ Other useful guides: [Repo Maintainers Guide](.guides/repo-maintainers.md)
 
 *Cohort 1 - (started 2020-08-12) - Wednesdays, 7:30 EDT*
 
-- 2020-08-07 Chapter ??? - ???: Presenter TBD
+- 2020-08-12 Orientation/Introductions/Plan of study/frequency of meeetings
 
-<details>
-  <summary> Future Meetings </summary>
-
-- 2020-08-17 Chapter ??? - ???
-- 2020-08-24 Chapter ??? - ???
+- 2020-08-19 Chapter 5 - TBD
+- 2020-08-26 Chapter 6 - Pavitra Chakravarty
 - 2020-08-31 Chapter ??? - ???
 - 2020-09-06 Chapter ??? - ???
 
