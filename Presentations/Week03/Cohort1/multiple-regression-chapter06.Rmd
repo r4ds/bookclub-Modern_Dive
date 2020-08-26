@@ -1,0 +1,526 @@
+---
+title:    "ModernDive Book Club"
+subtitle: "Pavitra Chakravarty"
+author:   "Moderndive Reading Group"
+output:
+  xaringan::moon_reader:
+    css: xaringan-themer.css
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+---
+
+```{r xaringan-themer, include=FALSE, warning=FALSE}
+library(xaringanthemer)
+style_mono_accent(
+  base_color = "#0B5CA9",
+  link_color = "#71BD4C",
+  header_font_google = google_font("Helvetica Neue"),
+  text_font_google   = google_font("Helvetica Neue", "300", "300i"),
+  code_font_google   = google_font("Fira Mono")
+)
+```
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  cache = TRUE,
+  cache.lazy = FALSE,
+  include = TRUE,
+  message = FALSE, 
+  warning = FALSE
+)
+```
+
+```{r, include = FALSE}
+library(tidyverse)
+library(moderndive)
+library(skimr)
+library(ISLR)
+library(kableExtra)
+library(patchwork)
+```
+# Introduction
+
+In multiple regression, we start considering models with more than one explanatory variable $x$. Hence, the interpretation of the associated effect of any one explanatory variable must be made in conjunction with the other explanatory variables included in the model
+
+## One numerical and one categorical explanatory variable
+
+In this section, the outcome variable is teaching score, but we include two different explanatory variables: age and gender. Could older instructors recieve better teaching evaluations from students? Or so younger instructors get better evaluations? Are there differences in evaluations given by students for instructors of different genders? We have:
+
+1. A numerical outcome variable $y$, the instructor's teaching score, and
+1. Two explanatory variables:
+    1. A numerical explanatory variable $x_1$, the instructor's age.
+    1. A categorical explanatory variable $x_2$, the instructor's gender.
+
+---
+
+### EDA
+
+```{r}
+evals_ch6 <- evals %>%
+  select(ID, score, age, gender)
+glimpse(evals_ch6)
+```
+
+---
+
+### Summary Statistics
+
+Let's compute some summary statistics
+
+```{r, eval =FALSE}
+evals_ch6 %>% select(score, age, gender) %>% skim()
+```
+```
+Skim summary statistics
+ n obs: 463 
+ n variables: 3 
+
+── Variable type:factor 
+ variable missing complete   n n_unique                top_counts ordered
+   gender       0      463 463        2 mal: 268, fem: 195, NA: 0   FALSE
+
+── Variable type:integer 
+ variable missing complete   n  mean  sd p0 p25 p50 p75 p100
+      age       0      463 463 48.37 9.8 29  42  48  57   73
+
+── Variable type:numeric
+ variable missing complete   n mean   sd  p0 p25 p50 p75 p100
+    score       0      463 463 4.17 0.54 2.3 3.8 4.3 4.6    5
+```
+---
+
+### Correlation/Plot
+
+```{r}
+evals_ch6 %>% 
+  get_correlation(formula = score ~ age)
+```
+Lets create a *colored* scatterplot where we use outcome variable `score` and explanatory variable `age` but with `color = gender` added to the `aes()`thetic mapping.
+
+---
+
+```{r eval=TRUE}
+ggplot(evals_ch6, aes(x = age, y = score, color = gender)) +
+  geom_point() +
+  labs(x = "Age", y = "Teaching Score", color = "Gender") +
+  geom_smooth(method = "lm", se = FALSE)
+```
+
+---
+
+## Interaction model:
+
+### Trends:
+* Almost no women faculty over the age of 60.
+* Regression lines negatively sloped with age (*more" negative) 
+* Female instructors are paying a harsher penalty for advanced age
+
+### Baseline/Offset:
+* "baseline for comparison" group from our gapminder data 
+* other four values of `estimate` are "offsets" to the baseline group
+
+### Fit/Apply:
+* "fit" the model using the `lm()` "linear model" function 
+* apply `get_regression_table()` function using the form `y ~ x1 * x2`
+
+---
+
+```{r }
+# Fit regression model:
+score_model_interaction <- lm(score ~ age * gender, data = evals_ch6)
+
+# Get regression table:
+get_regression_table(score_model_interaction)
+```
+```{r , echo=FALSE, purl=FALSE}
+# This code is used for dynamic non-static in-line text output purposes
+intercept_female <- get_regression_table(score_model_interaction) %>% 
+  filter(term == "intercept") %>% 
+  pull(estimate)
+slope_female <- get_regression_table(score_model_interaction) %>% 
+  filter(term == "age") %>% 
+  pull(estimate)
+offset_male <- get_regression_table(score_model_interaction) %>% 
+  filter(term == "gendermale") %>% 
+  pull(estimate)
+offset_slope_interaction <- get_regression_table(score_model_interaction) %>% 
+  filter(term == "age:gendermale") %>% 
+  pull(estimate)
+slope_male <- slope_female + offset_slope_interaction
+intercept_male <- intercept_female + offset_male
+```
+
+Since the word `female` comes alphabetically before `male`, female instructors are the "baseline for comparison" group. 
+
+`intercept` is only for the female instructors. This is also true for `age`. It is the slope for age *for only the female instructors*
+
+`indicator functions`
+
+
+$$
+\begin{aligned}
+\widehat{y} = \widehat{\text{score}} &= b_0 + b_{\text{age}} \cdot \text{age} + b_{\text{male}} \cdot \mathbb{1}_{\text{is male}}(x) + b_{\text{age,male}} \cdot \text{age} \cdot \mathbb{1}_{\text{is male}}(x)\\
+&= `r intercept_female` `r slope_female` \cdot \text{age} - `r -1*offset_male` \cdot \mathbb{1}_{\text{is male}}(x) + `r offset_slope_interaction` \cdot \text{age} \cdot \mathbb{1}_{\text{is male}}(x)
+\end{aligned}
+$$
+---
+
+## Parallel Slopes model:
+
+```{r eval=TRUE}
+ ggplot(evals_ch6, aes(x = age, y = score, color = gender)) +
+  geom_point() +
+  labs(x = "Age", y = "Teaching Score", color = "Gender") +
+  geom_parallel_slopes(se = FALSE)
+```
+---
+
+### Trends:
+* Regression lines negatively sloped with age (*more" negative) - parallel
+* Different intercepts
+
+### Fit/Apply:
+* "fit" the model using the `lm()` "linear model" function 
+* apply `get_regression_table()` function using the form `y ~ x1 + x2`
+
+```{r}
+### Fit regression model:
+score_model_parallel_slopes <- lm(score ~ age + gender,
+                                  data = evals_ch6)
+### Get regression table:
+get_regression_table(score_model_parallel_slopes)
+```
+
+---
+
+Let's put this all together and compute the fitted value $\widehat{y} = \widehat{\text{score}}$ for female instructors. Since for female instructors the indicator function $\mathbb{1}_{\text{is male}}(x)$ = 0, the previous equation becomes
+
+
+```{r  echo=FALSE, purl=FALSE}
+# This code is used for dynamic non-static in-line text output purposes
+intercept_female_parallel <- get_regression_table(score_model_parallel_slopes) %>%
+  filter(term == "intercept") %>% 
+  pull(estimate)
+offset_male_parallel <- get_regression_table(score_model_parallel_slopes) %>% 
+  filter(term == "gendermale") %>% 
+  pull(estimate)
+intercept_male_parallel <- intercept_female_parallel + offset_male_parallel
+age_coef <- get_regression_table(score_model_parallel_slopes) %>%
+  filter(term == "age") %>%
+  pull(estimate)
+```
+
+$$
+\begin{aligned}
+\widehat{y} = \widehat{\text{score}} &= `r intercept_female_parallel` `r age_coef` \cdot \text{age} + `r offset_male_parallel` \cdot 0\\
+&= `r intercept_female_parallel` `r age_coef` \cdot \text{age}
+\end{aligned}
+$$
+
+
+$$
+\begin{aligned}
+\widehat{y} = \widehat{\text{score}} &= b_0 + b_{\text{age}} \cdot \text{age} + b_{\text{male}} \cdot \mathbb{1}_{\text{is male}}(x)\\
+&= `r intercept_female_parallel` `r age_coef` \cdot \text{age} + `r offset_male_parallel` \cdot \mathbb{1}_{\text{is male}}(x) 
+\end{aligned}
+$$
+$$
+\begin{aligned}
+\widehat{y} = \widehat{\text{score}} &= `r intercept_female_parallel` `r age_coef` \cdot \text{age} + `r offset_male_parallel` \cdot 1\\
+&= (`r intercept_female_parallel` + `r offset_male_parallel`) - `r -1*age_coef` \cdot \text{age}\\
+&= `r intercept_male_parallel` `r age_coef` \cdot \text{age}
+\end{aligned}
+$$
+---
+
+```{r  echo=FALSE, purl=FALSE, message=FALSE}
+ interaction_plot <- ggplot(evals_ch6, aes(x = age, y = score, color = gender), show.legend = FALSE) +
+  geom_point() +
+  labs(x = "Age", y = "Teaching Score", title = "Interaction model") +
+  geom_smooth(method = "lm", se = FALSE) +
+  theme(legend.position = "none")
+parallel_slopes_plot <- ggplot(evals_ch6, aes(x = age, y = score, color = gender), show.legend = FALSE) +
+  geom_point() +
+  labs(x = "Age", y = "Teaching Score", title = "Interaction model") +
+  geom_parallel_slopes(se = FALSE) +
+  labs(x = "Age", y = "Teaching Score", title = "Parallel slopes model") +
+  theme(axis.title.y = element_blank())
+
+interaction_plot + parallel_slopes_plot
+```
+---
+
+## Two numerical explanatory variables
+
+* Using the `Credit` dataset from ISLR 
+* outcome variable of interest is the credit card debt 
+* explanatory variables are income, credit limit 
+
+```{r, message=FALSE}
+library(ISLR)
+credit_ch6 <- Credit %>% as_tibble() %>% 
+  select(ID, debt = Balance, credit_limit = Limit, 
+         income = Income, credit_rating = Rating, age = Age)
+```
+```{r}
+glimpse(credit_ch6)
+```
+
+---
+
+### Summary Statistics
+
+Let's compute some summary statistics
+
+```{r, eval =FALSE}
+credit_ch6 %>% select(debt, credit_limit, income) %>% skim()
+```
+```
+Skim summary statistics
+ n obs: 400 
+ n variables: 3 
+
+── Variable type:integer 
+  variable missing complete   n    mean      sd  p0     p25    p50     p75  p100
+credit_limit     0      400 400 4735.6  2308.2  855 3088    4622.5 5872.75 13913
+         debt    0      400 400  520.01  459.76   0   68.75  459.5  863     1999
+
+── Variable type:numeric 
+ variable missing complete   n  mean    sd    p0   p25   p50   p75   p100
+   income       0      400 400 45.22 35.24 10.35 21.01 33.12 57.47 186.63
+```
+---
+
+### Correlation/Plot
+
+```{r}
+credit_ch6 %>% 
+  select(debt, credit_limit, income) %>% 
+  cor()
+```
+
+---
+
+```{r eval=TRUE , echo = FALSE}
+ggcred <- ggplot(credit_ch6, aes(x = credit_limit, y = debt)) +
+  geom_point() +
+  labs(x = "Credit limit (in $)", y = "Credit card debt (in $)", 
+       title = "Debt and credit limit") +
+  geom_smooth(method = "lm", se = FALSE)
+
+ggincome <- ggplot(credit_ch6, aes(x = income, y = debt)) +
+  geom_point() +
+  labs(x = "Income (in $1000)", y = "Credit card debt (in $)", 
+       title = "Debt and income") +
+  geom_smooth(method = "lm", se = FALSE)
+
+ggcred + ggincome
+
+```
+---
+
+### Regression Plane
+
+```{r  echo=FALSE, purl=FALSE}
+debt_model <- lm(debt ~ credit_limit + income, data = credit_ch6)
+# Get regression table:
+get_regression_table(debt_model)
+
+```
+
+#### Corresponding equation:
+
+$$
+\begin{aligned}
+\widehat{y} &= b_0 + b_1 \cdot x_1 +  b_2 \cdot x_2\\
+\widehat{\text{debt}} &= b_0 + b_{\text{limit}} \cdot \text{limit} + b_{\text{income}} \cdot \text{income}\\
+&= -385.179 + 0.263 \cdot\text{limit} - 7.663 \cdot\text{income}
+\end{aligned}
+$$
+---
+
+### Learning Check
+
+Fit a new simple linear regression using lm(debt ~ credit_rating + age, data = credit_ch6)
+
+Let's compute some summary statistics
+
+```{r}
+credit_ch6 %>% 
+  select(debt, credit_rating, age) %>% 
+  cor()
+```
+
+---
+
+```{r eval=TRUE , echo = FALSE}
+ggcred <- ggplot(credit_ch6, aes(x = credit_rating, y = debt)) +
+  geom_point() +
+  labs(x = "Credit rating (in $)", y = "Credit card debt (in $)", 
+       title = "Debt and credit rating") +
+  geom_smooth(method = "lm", se = FALSE)
+
+ggincome <- ggplot(credit_ch6, aes(x = age, y = debt)) +
+  geom_point() +
+  labs(x = "Age", y = "Credit card debt (in $)", 
+       title = "Debt and age") +
+  geom_smooth(method = "lm", se = FALSE)
+
+ggcred + ggincome
+
+```
+
+---
+
+### Regression Plane
+
+```{r  echo=FALSE, purl=FALSE}
+debt_model <- lm(debt ~ credit_rating + age, data = credit_ch6)
+# Get regression table:
+get_regression_table(debt_model)
+```
+
+#### Corresponding equation:
+
+$$
+\begin{aligned}
+\widehat{y} &= b_0 + b_1 \cdot x_1 +  b_2 \cdot x_2\\
+\widehat{\text{debt}} &= b_0 + b_{\text{credit_rating}} \cdot \text{credit_rating} + b_{\text{age}} \cdot \text{age}\\
+&= -270 + 2.59 \cdot\text{credit_rating} - 2.35 \cdot\text{age}
+\end{aligned}
+$$
+
+---
+
+### Model Selection
+
+Graphs for regression line for interaction and parallel slopes model
+
+```{r eval=TRUE , echo = FALSE}
+ interaction_plot <- ggplot(evals_ch6, aes(x = age, y = score, color = gender), show.legend = FALSE) +
+  geom_point() +
+  labs(x = "Age", y = "Teaching Score", title = "Interaction model") +
+  geom_smooth(method = "lm", se = FALSE) +
+  theme(legend.position = "none")
+parallel_slopes_plot <- ggplot(evals_ch6, aes(x = age, y = score, color = gender), show.legend = FALSE) +
+  geom_point() +
+  labs(x = "Age", y = "Teaching Score", title = "Interaction model") +
+  geom_parallel_slopes(se = FALSE) +
+  labs(x = "Age", y = "Teaching Score", title = "Parallel slopes model") +
+  theme(axis.title.y = element_blank())
+
+interaction_plot + parallel_slopes_plot
+
+```
+---
+
+```{r eval=TRUE, echo = FALSE}
+# Interaction model
+p1 <- ggplot(MA_schools, 
+       aes(x = perc_disadvan, y = average_sat_math, color = size)) +
+  geom_point(alpha = 0.25) +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(x = "Percent economically disadvantaged", y = "Math SAT Score", 
+       color = "School size", title = "Interaction model")
+
+# Parallel slopes model
+p2 <- ggplot(MA_schools, 
+       aes(x = perc_disadvan, y = average_sat_math, color = size)) +
+  geom_point(alpha = 0.25) +
+  geom_parallel_slopes(se = FALSE) +
+  labs(x = "Percent economically disadvantaged", y = "Math SAT Score", 
+       color = "School size", title = "Parallel slopes model")
+
+p1+p2
+
+```
+
+---
+
+```{r eval=TRUE, echo = FALSE}
+model_2_interaction <- lm(average_sat_math ~ perc_disadvan * size, 
+                          data = MA_schools)
+get_regression_table(model_2_interaction)
+model_2_parallel_slopes <- lm(average_sat_math ~ perc_disadvan + size, 
+                              data = MA_schools)
+get_regression_table(model_2_parallel_slopes)
+
+```
+ 
+---
+
+### Correlation Coefficient
+
+#### before transformation:
+
+```{r}
+credit_ch6 %>% 
+  select(debt, credit_limit, income) %>% 
+  cor()
+```
+#### after transformation:
+
+```{r, eval=TRUE}
+credit_ch6 %>% select(debt, income) %>% 
+  mutate(income = income * 1000) %>% 
+  cor()
+```
+ 
+---
+
+### Simpson's Paradox 
+
+```{r echo=FALSE, purl=FALSE}
+model3_balance_vs_income_plot <- ggplot(credit_ch6, aes(x = income, y = debt)) +
+  geom_point() +
+  labs(
+    x = "Income (in $1000)", y = "Credit card debt (in $)",
+    title = "Two scatterplots of credit card debt vs income"
+  ) +
+  geom_smooth(method = "lm", se = FALSE) +
+  scale_y_continuous(limits = c(0, NA))
+```
+```{r echo=FALSE, purl=FALSE}
+debt_model <- lm(debt ~ credit_limit + income, data = credit_ch6)
+
+model3_balance_vs_income_plot 
+```
+---
+
+```{r echo=FALSE, purl=FALSE}
+get_regression_table(debt_model)
+```
+---
+
+```{r echo=FALSE, purl=FALSE, message=FALSE}
+credit_ch6 <- credit_ch6 %>%
+  mutate(limit_bracket = cut_number(credit_limit, 4)) %>%
+  mutate(limit_bracket = fct_recode(limit_bracket,
+    "low" =  "[855,3.09e+03]",
+    "med-low" = "(3.09e+03,4.62e+03]",
+    "med-high" = "(4.62e+03,5.87e+03]",
+    "high" = "(5.87e+03,1.39e+04]"
+  ))
+
+
+model3_balance_vs_income_plot_colored <- ggplot(
+  credit_ch6,
+  aes(
+    x = income, y = debt,
+    col = limit_bracket
+  )
+) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(
+    x = "Income (in $1000)", y = "Credit card debt (in $)",
+    color = "Credit limit\nbracket"
+  ) +
+  scale_y_continuous(limits = c(0, NA)) +
+  theme(axis.title.y = element_blank())
+
+
+  model3_balance_vs_income_plot + model3_balance_vs_income_plot_colored
+
+```
