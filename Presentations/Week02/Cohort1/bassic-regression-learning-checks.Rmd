@@ -1,0 +1,124 @@
+---
+title: "basic-regression"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+library(moderndive)
+library(skimr)
+library(gapminder)
+```
+
+```{r}
+evals_ch5 <- evals %>%
+  select(ID, score, bty_avg, age)
+```
+
+# LC 5.1
+
+## Looking at raw data values
+
+```{r}
+evals_ch5 %>% glimpse()
+evals_ch5 %>% sample_n(5)
+```
+
+## Computing summary statistics
+
+
+### univariate
+
+```{r}
+evals_ch5 %>% 
+  select(-ID) %>% 
+  skim()
+```
+
+### bivariate
+
+```{r}
+evals_ch5 %>% 
+  summarize(correlation = cor(score, age))
+```
+
+## Creating visualization
+
+```{r}
+evals_ch5 %>% 
+  ggplot(aes(age, score)) +
+  geom_point() + 
+  geom_smooth(method = 'lm', se = F)
+```
+
+
+# LC 5.2
+
+```{r}
+model <- lm(score ~ age, data = evals_ch5)
+
+model %>% 
+  get_regression_table()
+```
+
+# LC 5.3
+
+```{r}
+model %>% 
+  get_regression_points()
+```
+
+
+# LC 5.4
+
+## Looking at raw data values
+
+```{r}
+gapminder %>% glimpse()
+gapminder %>% sample_n(5)
+```
+
+
+## Computing summary statistics
+
+### univariate
+
+```{r}
+gapminder %>% skim()
+```
+
+## Creating visualization
+
+```{r}
+gapminder %>% 
+  ggplot(aes(continent, gdpPercap)) +
+  geom_boxplot() + 
+  scale_y_log10()
+
+gapminder %>% 
+  ggplot(aes(gdpPercap)) +
+  geom_histogram() +
+  facet_wrap(~ continent)
+```
+
+# LC 5.5-5.7
+
+```{r}
+gapminder2007 <- 
+  gapminder %>% 
+  filter(year == 2007)
+
+
+gdpPercap_by_continent <- lm(gdpPercap ~ continent, data = gapminder2007) 
+gdpPercap_by_continent %>% 
+  get_regression_table()
+
+gdpPercap_by_continent %>% 
+  get_regression_points(ID = "country") %>% 
+  arrange(-residual)
+```
+
