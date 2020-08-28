@@ -25,7 +25,7 @@ Other useful guides: [Repo Maintainers Guide](.guides/repo-maintainers.md)
 
 ### Presentations & Recordings
 
-- 2020-08-12 Orientation/Introductions/Plan of study/frequency of meeetings
+- 2020-08-12 Overview/Planning - Matt Dupree (slides | video)
 - 2020-08-19 Chapter 5 - Matt Dupree (slides | [video](https://www.youtube.com/watch?v=2GaZ5WMjhfM))
-- 2020-08-26 Chapter 6 - Pavitra Chakravarty (slides | [video](https://youtu.be/jt_fwC7WERA))
+- 2020-08-26 Chapter 6 - Pavitra Chakravarty ([slides](https://r4ds.github.io/bookclub-Modern_Dive/Presentations/Week03/Cohort1/multiple-regression-chapter06.html#1) | [video](https://youtu.be/jt_fwC7WERA))
 
