@@ -16,20 +16,16 @@ Other useful guides: [Repo Maintainers Guide](.guides/repo-maintainers.md)
 
 *Cohort 1 - (started 2020-08-12) - Wednesdays, 7:30 EDT*
 
-- 2020-08-12 Orientation/Introductions/Plan of study/frequency of meeetings
+- 2020-09-02 Chapter 7
+- 2020-09-09 Chapter 8
+- 2020-09-16 Chapter 9
 
-- 2020-08-19 Chapter 5 - TBD
-- 2020-08-26 Chapter 6 - Pavitra Chakravarty
-- 2020-08-31 Chapter ??? - ???
-- 2020-09-06 Chapter ??? - ???
-
-</details>
 <hr>
 
 
 ### Presentations & Recordings
 
-Introduction/Ch1 
-
-- Presenter: VIDEO | SLIDES
+- 2020-08-12 Orientation/Introductions/Plan of study/frequency of meeetings
+- 2020-08-19 Chapter 5 - Matt Dupree (slides | [video](https://www.youtube.com/watch?v=2GaZ5WMjhfM))
+- 2020-08-26 Chapter 6 - Pavitra Chakravarty (slides | [video](https://youtu.be/jt_fwC7WERA))
 
