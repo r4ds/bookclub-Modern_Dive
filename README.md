@@ -17,7 +17,7 @@ Other useful guides: [Repo Maintainers Guide](.guides/repo-maintainers.md)
 *Cohort 1 - (started 2020-08-12) - Wednesdays, 7:30 EDT*
 
 - 2020-09-02 Chapter 7
-- 2020-09-09 Chapter 8
+- 2020-09-09 Chapter 8 - Pavitra Chakravarty
 - 2020-09-16 Chapter 9
 
 <hr>
