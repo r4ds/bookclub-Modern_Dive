@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>ModernDive</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Erick Knackstedt" />
+    <meta name="date" content="2020-09-09" />
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+    <link rel="stylesheet" href="custom.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# ModernDive
+## Chapter 7: Sampling
+### Erick Knackstedt
+### <span class="citation">@Eknackstedt</span>
+### 2020-09-09
+
+---
+
+
+
+
+
+
+# Outline
+
+- Sampling bowl activity
+
+--
+
+- Virtual sampling
+
+--
+
+- Sampling framework
+
+--
+
+- Case study: Polls
+
+--
+
+- Conclusion
+
+---
+
+
+## Sampling bowl activity
+
+What does the sampling bowl represent?
+
+--
+
+- The population of interest 
+
+--
+
+What does the shovel represent?
+
+--
+
+- A tool for accessing values from the population 
+
+--
+
+What does shoveling represent?
+
+--
+
+- The activity that allows access to values from the population
+
+--
+
+What does the counting of different color balls and calculation of proportions represent?
+
+--
+
+- Summaries of batches produce values(statistics), which are estimates of population parameters. Estimates are random variables. 
+
+--
+
+What does it mean to use the shovel to take and process multiple batches from the bowl?
+
+--
+
+- We are collecting batches and calculating summaries A mental model here is a list-column work flow, where each row is a summary statistic computed on a batch stored as a list in the list column. 
+
+---
+## Learning Check Sampling bowl activity
+
+&gt; (LC7.1) Why was it important to mix the bowl before we sampled the balls?
+
+--
+
+This represents "randomizing" the sampling process, which increases accuracy. 
+
+--
+
+&gt; (LC7.2) Why is it that our 33 groups of friends did not all have the same numbers of balls that were red out of 50, and hence different proportions red?
+
+--
+
+"Proportion" in this case is a sample statistic, and sample statistics are random variables. 
+
+---
+## Virtual Sampling
+
+What is the difference between tactile sampling and virtual sampling?
+
+--
+
+- Tactile sampling means that all population values exist in the physical world and are accessed physically, virtual sampling means that all of the population values exist in computer memory and can be accessed with a function. 
+
+--
+
+What is a benefit of virtual sampling over tactile sampling?
+
+--
+
+- With virtual sampling you can draw as many batches as your machine can compute and as time allows. This allows you to build up a larger data set of summary statistics
+
+---
+# Learning Check Using the virtual shovel
+
+&gt; (LC7.3) Why couldn’t we study the effects of sampling variation when we used the virtual shovel only once? Why did we need to take more than one virtual sample (in our case 33 virtual samples)?
+
+--
+
+To measure sampling variation you need a data set where each row is a sample statistic that summarizes a single sample. Having only one sample means you have only one row in your data set. 
+
+---
+
+## Using different shovels
+
+What does it mean to use different shovels?
+
+--
+
+- This represents choosing batch size, i.e. the number of values sampled
+
+--
+
+How does batch size effect our estimates of population parameters?
+
+--
+
+- Estimate precision improves as batches grow larger and more sampled batches are collected (i.e. larger shovels, more shoveling)
+
+---
+## Learning Check Using different shovels
+
+&gt; (LC7.6) In Figure 7.12, we used shovels to take 1000 samples each, computed the resulting 1000 proportions of the shovel’s balls that were red, and then visualized the distribution of these 1000 proportions in a histogram. We did this for shovels with 25, 50, and 100 slots in them. As the size of the shovels increased, the histograms got narrower. In other words, as the size of the shovels increased from 25 to 50 to 100, did the 1000 proportions
+&gt; 
+&gt; A. vary less,
+&gt; B. vary by the same amount, or
+&gt; C. vary more?
+
+--
+
+A. vary less
+
+--
+
+&gt; (LC7.7) What summary statistic did we use to quantify how much the 1000 proportions red varied?
+&gt; 
+&gt; A. The interquartile range
+&gt; B. The standard deviation
+&gt; C. The range: the largest value minus the smallest.
+
+--
+
+B. The standard deviation
+
+---
+
+## Sampling framework
+
+1. Population
+2. Population parameter
+3. Census
+4. Sampling
+5. Point estimate (AKA sample statistic)
+6. Representative sampling
+7. Generalizability
+8. Biased sampling
+9. Random sampling
+
+--
+
+How would you summarize this framework to a colleague? 
+
+---
+
+## Learning check Terminology and notation + Statistical definitions
+
+&gt; (LC7.8) In the case of our bowl activity, what is the population parameter? Do we know its value?
+
+--
+
+The proportion of red balls. We do indeed.
+
+--
+ 
+&gt; (LC7.9) What would performing a census in our bowl activity correspond to? Why did we not perform a census?
+
+--
+
+Measuring the population parameter. We didn't because of labor constriants. 
+
+--
+
+&gt; (LC7.10) What purpose do point estimates serve in general? What is the name of the point estimate specific to our bowl activity? What is its mathematical notation?
+
+--
+
+Point estimates allow us to infer values for population parameters. `\(\hat{p}\)`
+
+--
+
+&gt; (LC7.11) How did we ensure that our tactile samples using the shovel were random?
+
+--
+
+Shook up the bowl.
+
+---
+
+## Learning check cont. Terminology and notation + Statistical definitions
+
+&gt; (LC7.12) Why is it important that sampling be done at random?
+
+--
+
+Increases the chance that a sample's distribution will follow that found in the overall population.
+
+--
+
+&gt; (LC7.13) What are we inferring about the bowl based on the samples using the shovel?
+
+--
+
+The proportion of red balls. 
+
+--
+
+&gt; (LC7.14) What purpose did the sampling distributions serve?
+
+--
+
+It allowed us to identify the average sample statistic as the most likely estimate of the population parameter of interest.  
+
+&gt; (LC7.15) What does the standard error of the sample proportion `\(\hat{p}\)` quantify?
+
+The standard deviation of the sample statistic. 
+
+---
+## Learning check The moral of the story
+
+&gt; (LC7.17) What is the difference between an accurate and a precise estimate?
+
+--
+
+Accuracy is how well the sample represents the population, precision is how narrow your standard errors are. 
+
+--
+
+&gt; (LC7.18) How do we ensure that an estimate is accurate? How do we ensure that an estimate is precise?
+
+--
+
+Randomization drives accuracy, sample size drives precision. 
+
+--
+
+&gt; (LC7.19) In a real-life situation, we would not take 1000 different samples to infer about a population, but rather only one. Then, what was the purpose of our exercises where we took 1000 different samples?
+
+--
+
+To demonstrate that sample statistics are random variables. 
+
+---
+
+## Learning check Case study: Polls
+
+Comment on the representativeness of the following sampling methodologies:
+
+&gt; (LC7.21) The Royal Air Force wants to study how resistant all their airplanes are to bullets. They study the bullet holes on all the airplanes on the tarmac after an air battle against the Luftwaffe (German Air Force).
+
+--
+
+This sample is biased to airplanes that weren't shot down. 
+
+-- 
+
+&gt; (LC7.22) Imagine it is 1993, a time when almost all households had landlines. You want to know the average number of people in each household in your city. You randomly pick out 500 phone numbers from the phone book and conduct a phone survey.
+
+--
+
+This seems like a randomized sample that will result in accurate point estimates.
+
+---
+
+## Learning check cont.
+
+&gt; (LC7.23) You want to know the prevalence of illegal downloading of TV shows among students at a local college. You get the emails of 100 randomly chosen students and ask them, “How many times did you download a pirated TV show last week?”.
+
+--
+
+This sample is biased to students that are willing to admit illegal behavior.
+
+--
+
+&gt; (LC7.24) A local college administrator wants to know the average income of all graduates in the last 10 years. So they get the records of five randomly chosen graduates, contact them, and obtain their answers.
+
+--
+
+The precision of the sample statistic will be low due to small sample size.
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create();
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();</script>
+<style>
+.logo {
+  background-image: url(r4ds.png);
+  background-size: contain;
+  background-repeat: no-repeat;
+  position: absolute;
+  top: 1em;
+  right: 1em;
+  width: 110px;
+  height: 128px;
+  z-index: 0;
+}
+</style>
+
+<script>
+document
+  .querySelectorAll(
+    '.remark-slide-content' +
+    ':not(.title-slide)' +
+    // add additional classes to exclude here, e.g.
+    // ':not(.inverse)' +
+    ':not(.hide-logo)'
+  )
+  .forEach(el => {
+    el.innerHTML += '<div class="logo"></div>';
+  });
+</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
