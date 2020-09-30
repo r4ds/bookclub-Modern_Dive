@@ -1,0 +1,189 @@
+---
+title: "ModernDive"
+subtitle: "Chapter 8: Bootstrapping and Confidence Intervals"
+author: "Erick Knackstedt"
+institute: "@Eknackstedt"
+date: " `r Sys.Date()` "
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    css: ["xaringan-themer.css","custom.css"]
+    includes:
+      after_body: insert-logo.html
+---
+
+
+```{r xaringan-themer, include = FALSE}
+library(xaringanthemer)
+library(tidyverse)
+library(moderndive)
+library(infer)
+style_mono_light(
+  base_color = "#3092FF",
+  header_font_google = google_font("Josefin Sans"),
+  text_font_google   = google_font("Montserrat", "300", "300i"),
+  code_font_google   = google_font("Droid Mono"),
+)
+```
+
+
+# Outline
+
+--
+
+- Pennies activity
+
+--
+
+- Computer simulation of resampling
+
+--
+
+- Understanding confidence intervals
+
+--
+
+- Constructing confidence intervals
+
+--
+
+- Interpreting confidence intervals
+
+
+---
+
+
+## Pennies activity
+
+--
+
+What is boostrap resampling with replacement?
+
+--
+
+- Sampling from a sample with replacement, and calculating sample statistics per resample
+
+--
+
+What is this an approximation of?
+
+--
+
+- A sampling distribution 
+
+
+
+---
+
+## Computer simulation of resampling
+
+--
+
+How do we do this in R?
+
+--
+
+```{r eval=FALSE, include=TRUE}
+virtual_resample <- pennies_sample %>% 
+  rep_sample_n(size = 50, replace = TRUE)
+```
+
+--
+
+What does this do?
+
+--
+
+- This samples the data frame with replacement, tagging each resample with an id in a column called "replicate", and appending each resample into one data frame that holds all resamples. 
+
+--
+
+How do you calculate bootstrap statistics from this output?
+
+--
+
+- You group by replicate and use summarize. 
+
+--
+
+Did I just make up bootstrap statistic?
+
+--
+
+- Maybe, trying to get at the idea that the bootstrap distribution is an approximation of the sampling distribution. 
+
+---
+
+## Understanding confidence intervals
+
+--
+
+What is the difference between a point estimate and a confidence interval?
+
+--
+
+- Point estimates are the output of summarizing a statistic from a bootstrap distribution. A confidence interval is a two number summary of the bootstrap distribution, commonly using the values at the 2.5 and 97.5 percentiles (5% error rate).
+
+--
+
+Whoa, the percentile method is just one approach to calculating a confidence interval. What about the others?
+
+--
+
+- Yeah, there are two others. The standard error method takes the statistic ± 1.96 * the standard deviation of the statistic to get a similar range of values to the percentile method. The 3rd is a theory-based method introduced at the end of the chapter. 
+
+
+---
+
+## Constructing confidence intervals
+
+--
+
+Ok, what is the infer package all about?
+
+--
+
+- specify(response) then generate(reps) then calculate(stat) then visualize
+
+--
+
+What about the confidence intervals?
+
+--
+
+```{r eval=FALSE, include=TRUE}
+percentile_ci <- bootstrap_distribution %>% 
+  get_confidence_interval(level = 0.95, type = "percentile")
+
+# Or
+
+standard_error_ci <- bootstrap_distribution %>% 
+  get_confidence_interval(type = "se", point_estimate = x_bar)
+```
+
+
+---
+
+## Interpreting confidence intervals
+
+--
+
+What is a confidence interval telling us?
+
+--
+
+- It is telling us a range of values where the population parameter may fall, with the rate the population parameter falls in the range determined percentage of bootstrapped values that fall in confidence interval, aka the confidence level. 
+
+--
+
+What impacts the width of the confidence interval?
+
+--
+
+- The higher the confidence level the wider the interval, while holding the confidence level constant the larger the sample the narrower the interval. 
+
+
+
+
+
+

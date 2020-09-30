@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>ModernDive</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Erick Knackstedt" />
+    <meta name="date" content="2020-09-30" />
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+    <link rel="stylesheet" href="custom.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# ModernDive
+## Chapter 8: Bootstrapping and Confidence Intervals
+### Erick Knackstedt
+### <span class="citation">@Eknackstedt</span>
+### 2020-09-30
+
+---
+
+
+
+
+
+
+# Outline
+
+--
+
+- Pennies activity
+
+--
+
+- Computer simulation of resampling
+
+--
+
+- Understanding confidence intervals
+
+--
+
+- Constructing confidence intervals
+
+--
+
+- Interpreting confidence intervals
+
+
+---
+
+
+## Pennies activity
+
+--
+
+What is boostrap resampling with replacement?
+
+--
+
+- Sampling from a sample with replacement, and calculating sample statistics per resample
+
+--
+
+What is this an approximation of?
+
+--
+
+- A sampling distribution 
+
+
+
+---
+
+## Computer simulation of resampling
+
+--
+
+How do we do this in R?
+
+--
+
+
+```r
+virtual_resample &lt;- pennies_sample %&gt;% 
+  rep_sample_n(size = 50, replace = TRUE)
+```
+
+--
+
+What does this do?
+
+--
+
+- This samples the data frame with replacement, tagging each resample with an id in a column called "replicate", and appending each resample into one data frame that holds all resamples. 
+
+--
+
+How do you calculate bootstrap statistics from this output?
+
+--
+
+- You group by replicate and use summarize. 
+
+--
+
+Did I just make up bootstrap statistic?
+
+--
+
+- Maybe, trying to get at the idea that the bootstrap distribution is an approximation of the sampling distribution. 
+
+---
+
+## Understanding confidence intervals
+
+--
+
+What is the difference between a point estimate and a confidence interval?
+
+--
+
+- Point estimates are the output of summarizing a statistic from a bootstrap distribution. A confidence interval is a two number summary of the bootstrap distribution, commonly using the values at the 2.5 and 97.5 percentiles (5% error rate).
+
+--
+
+Whoa, the percentile method is just one approach to calculating a confidence interval. What about the others?
+
+--
+
+- Yeah, there are two others. The standard error method takes the statistic ± 1.96 * the standard deviation of the statistic to get a similar range of values to the percentile method. The 3rd is a theory-based method introduced at the end of the chapter. 
+
+
+---
+
+## Constructing confidence intervals
+
+--
+
+Ok, what is the infer package all about?
+
+--
+
+- specify(response) then generate(reps) then calculate(stat) then visualize
+
+--
+
+What about the confidence intervals?
+
+--
+
+
+```r
+percentile_ci &lt;- bootstrap_distribution %&gt;% 
+  get_confidence_interval(level = 0.95, type = "percentile")
+
+# Or
+
+standard_error_ci &lt;- bootstrap_distribution %&gt;% 
+  get_confidence_interval(type = "se", point_estimate = x_bar)
+```
+
+
+---
+
+## Interpreting confidence intervals
+
+--
+
+What is a confidence interval telling us?
+
+--
+
+- It is telling us a range of values where the population parameter may fall, with the rate the population parameter falls in the range determined percentage of bootstrapped values that fall in confidence interval, aka the confidence level. 
+
+--
+
+What impacts the width of the confidence interval?
+
+--
+
+- The higher the confidence level the wider the interval, while holding the confidence level constant the larger the sample the narrower the interval.
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create();
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();</script>
+<style>
+.logo {
+  background-image: url(r4ds.png);
+  background-size: contain;
+  background-repeat: no-repeat;
+  position: absolute;
+  top: 1em;
+  right: 1em;
+  width: 110px;
+  height: 128px;
+  z-index: 0;
+}
+</style>
+
+<script>
+document
+  .querySelectorAll(
+    '.remark-slide-content' +
+    ':not(.title-slide)' +
+    // add additional classes to exclude here, e.g.
+    // ':not(.inverse)' +
+    ':not(.hide-logo)'
+  )
+  .forEach(el => {
+    el.innerHTML += '<div class="logo"></div>';
+  });
+</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
